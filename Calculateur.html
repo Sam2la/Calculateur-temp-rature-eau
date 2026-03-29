@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Mélange Thermique</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #45a049; }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            background-color: #e8f5e9;
+        }
+        .res-line { margin: 10px 0; font-weight: bold; }
+        .t1-color { color: #d32f2f; }
+        .t2-color { color: #1976d2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mélange d'eau</h2>
+    
+    <div class="input-group">
+        <label>Volume total souhaité (L)</label>
+        <input type="number" id="v_total" placeholder="Ex: 10" step="any">
+    </div>
+    <div class="input-group">
+        <label>Température cible (°C)</label>
+        <input type="number" id="t_cible" placeholder="Ex: 37" step="any">
+    </div>
+    <div class="input-group">
+        <label>Température Source 1 (°C)</label>
+        <input type="number" id="t1" placeholder="Ex: 60" step="any">
+    </div>
+    <div class="input-group">
+        <label>Température Source 2 (°C)</label>
+        <input type="number" id="t2" placeholder="Ex: 15" step="any">
+    </div>
+
+    <button onclick="calculer()">Calculer le mélange</button>
+
+    <div id="results">
+        <div class="res-line t1-color" id="res_v1"></div>
+        <div class="res-line t2-color" id="res_v2"></div>
+    </div>
+</div>
+
+<script>
+    function calculer() {
+        const vTotal = parseFloat(document.getElementById('v_total').value);
+        const tCible = parseFloat(document.getElementById('t_cible').value);
+        const t1 = parseFloat(document.getElementById('t1').value);
+        const t2 = parseFloat(document.getElementById('t2').value);
+        const resDiv = document.getElementById('results');
+
+        // Validations
+        if (isNaN(vTotal) || isNaN(tCible) || isNaN(t1) || isNaN(t2)) {
+            alert("Veuillez remplir tous les champs avec des nombres.");
+            return;
+        }
+
+        if (t1 === t2) {
+            alert("Les températures sources doivent être différentes.");
+            return;
+        }
+
+        const minT = Math.min(t1, t2);
+        const maxT = Math.max(t1, t2);
+
+        if (tCible < minT || tCible > maxT) {
+            alert(`Impossible : la température cible doit être entre ${minT}°C et ${maxT}°C.`);
+            return;
+        }
+
+        // Calcul
+        const v1 = vTotal * (tCible - t2) / (t1 - t2);
+        const v2 = vTotal - v1;
+
+        // Affichage
+        document.getElementById('res_v1').innerText = `Volume T1 (${t1}°C) : ${v1.toFixed(2)} L`;
+        document.getElementById('res_v2').innerText = `Volume T2 (${t2}°C) : ${v2.toFixed(2)} L`;
+        resDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
